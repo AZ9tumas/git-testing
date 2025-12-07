@@ -36,6 +36,7 @@
 *.exe
 *.out
 *.app
+bytecode_adder
 
 # debug information files
 *.dwo
