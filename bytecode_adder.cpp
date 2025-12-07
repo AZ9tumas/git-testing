@@ -22,12 +22,23 @@ public:
 
     int execute() {
         while (pc < bytecode.size()) {
-            OpCode op = static_cast<OpCode>(bytecode[pc++]);
+            int opcode = bytecode[pc++];
+            
+            // Validate opcode
+            if (opcode < PUSH || opcode > HALT) {
+                std::cerr << "Error: Invalid opcode " << opcode << std::endl;
+                return 0;
+            }
+            
+            OpCode op = static_cast<OpCode>(opcode);
             
             switch (op) {
                 case PUSH:
                     if (pc < bytecode.size()) {
                         stack.push(bytecode[pc++]);
+                    } else {
+                        std::cerr << "Error: PUSH missing operand" << std::endl;
+                        return 0;
                     }
                     break;
                     
@@ -36,6 +47,9 @@ public:
                         int b = stack.top(); stack.pop();
                         int a = stack.top(); stack.pop();
                         stack.push(a + b);
+                    } else {
+                        std::cerr << "Error: ADD requires 2 values on stack" << std::endl;
+                        return 0;
                     }
                     break;
                     
