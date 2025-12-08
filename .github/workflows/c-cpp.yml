@@ -7,13 +7,37 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build
+    
+    - name: Build main program
       run: g++ -std=c++11 -o bytecode_adder bytecode_adder.cpp
-    - name: Test
+    
+    - name: Build test_basic_operations
+      run: g++ -std=c++11 -o test_basic_operations test_basic_operations.cpp
+    
+    - name: Build test_edge_cases
+      run: g++ -std=c++11 -o test_edge_cases test_edge_cases.cpp
+    
+    - name: Build test_complex_programs
+      run: g++ -std=c++11 -o test_complex_programs test_complex_programs.cpp
+    
+    - name: Run main program
       run: ./bytecode_adder
+    
+    - name: Run basic operations tests
+      run: ./test_basic_operations
+    
+    - name: Run edge cases tests
+      run: ./test_edge_cases
+    
+    - name: Run complex programs tests
+      run: ./test_complex_programs
+    
+    - name: Test Summary
+      if: always()
+      run: echo "All tests completed!"
