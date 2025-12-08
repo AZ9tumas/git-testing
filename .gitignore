@@ -37,6 +37,9 @@
 *.out
 *.app
 bytecode_adder
+test_basic_operations
+test_edge_cases
+test_complex_programs
 
 # debug information files
 *.dwo
