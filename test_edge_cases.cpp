@@ -3,6 +3,18 @@
 #include <iostream>
 #include <sstream>
 
+// Helper function to capture stderr and execute a test
+int execute_with_stderr_capture(BytecodeInterpreter& interp) {
+    std::streambuf* old_cerr = std::cerr.rdbuf();
+    std::stringstream captured_cerr;
+    std::cerr.rdbuf(captured_cerr.rdbuf());
+    
+    int result = interp.execute();
+    
+    std::cerr.rdbuf(old_cerr);
+    return result;
+}
+
 void test_empty_program() {
     std::vector<int> program = {};
     BytecodeInterpreter interp(program);
@@ -36,52 +48,25 @@ void test_add_without_halt() {
 }
 
 void test_invalid_opcode() {
-    // Redirect stderr to capture error message
-    std::streambuf* old_cerr = std::cerr.rdbuf();
-    std::stringstream captured_cerr;
-    std::cerr.rdbuf(captured_cerr.rdbuf());
-    
     std::vector<int> program = {99, HALT};  // 99 is invalid opcode
     BytecodeInterpreter interp(program);
-    int result = interp.execute();
-    
-    // Restore stderr
-    std::cerr.rdbuf(old_cerr);
-    
+    int result = execute_with_stderr_capture(interp);
     assert(result == 0);
     std::cout << "✓ test_invalid_opcode passed" << std::endl;
 }
 
 void test_push_missing_operand() {
-    // Redirect stderr to capture error message
-    std::streambuf* old_cerr = std::cerr.rdbuf();
-    std::stringstream captured_cerr;
-    std::cerr.rdbuf(captured_cerr.rdbuf());
-    
     std::vector<int> program = {PUSH};  // PUSH without operand
     BytecodeInterpreter interp(program);
-    int result = interp.execute();
-    
-    // Restore stderr
-    std::cerr.rdbuf(old_cerr);
-    
+    int result = execute_with_stderr_capture(interp);
     assert(result == 0);
     std::cout << "✓ test_push_missing_operand passed" << std::endl;
 }
 
 void test_add_insufficient_operands() {
-    // Redirect stderr to capture error message
-    std::streambuf* old_cerr = std::cerr.rdbuf();
-    std::stringstream captured_cerr;
-    std::cerr.rdbuf(captured_cerr.rdbuf());
-    
     std::vector<int> program = {PUSH, 5, ADD, HALT};  // ADD with only 1 value on stack
     BytecodeInterpreter interp(program);
-    int result = interp.execute();
-    
-    // Restore stderr
-    std::cerr.rdbuf(old_cerr);
-    
+    int result = execute_with_stderr_capture(interp);
     assert(result == 0);
     std::cout << "✓ test_add_insufficient_operands passed" << std::endl;
 }
